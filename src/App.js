@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Checkbox, Flex, Heading, HStack, Select, SimpleGrid, Text } from "@chakra-ui/react"
+import { Checkbox, Flex, Heading, Select, SimpleGrid, Stack, Text } from "@chakra-ui/react"
 
 import { API_URL, months } from "./constants"
 import EventCard from "./components/EventCard"
@@ -82,9 +82,9 @@ function App() {
   }, [favourites])
 
   return (
-    <Flex maxWidth='900px' mx='auto' mt='22' flexDirection='column'>
+    <Flex maxWidth='4xl' mx='auto' mt='22' flexDirection='column' px={{ base: 4, lg: 0 }}>
       <Heading> Event Listing</Heading>
-      <HStack mt='4' spacing='4'>
+      <Stack direction={{ base: 'column', sm: 'row' }} mt='4' spacing='4'>
         <Flex alignItems='center'>
           <Text whiteSpace='nowrap' mr='2'>City:</Text>
           <Select name='city' placeholder="Select city" onChange={onChange}>
@@ -103,8 +103,8 @@ function App() {
         <Flex alignItems='center'>
           <Checkbox name='onlyFavourite' onChange={onChange}>My favourite</Checkbox>
         </Flex>
-      </HStack>
-      <SimpleGrid columns='2' spacing='6' mt='4' mb='16'>
+      </Stack>
+      <SimpleGrid columns={{ base: 1, md: 2 }} spacing='4' mt='4' mb='16'>
         {events?.map(event => <EventCard key={event.id} {...event} manageFavourite={manageFavourite} />)}
       </SimpleGrid>
     </Flex>
