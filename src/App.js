@@ -83,7 +83,7 @@ function App() {
 
   return (
     <Flex maxWidth='4xl' mx='auto' mt='22' flexDirection='column' px={{ base: 4, lg: 0 }}>
-      <Heading>Xsolla Event Listing</Heading>
+      <Heading>Xsolla Event Listing.</Heading>
       <Stack direction={{ base: 'column', sm: 'row' }} mt='4' spacing='4'>
         <Flex alignItems='center'>
           <Text whiteSpace='nowrap' mr='2'>City:</Text>
