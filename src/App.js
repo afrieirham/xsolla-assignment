@@ -12,45 +12,45 @@ function App() {
   const [filter, setFilter] = useState({ city: '', month: '' })
 
 
+  // helper functions
   const onChange = (e) => setFilter({ ...filter, [e.target.name]: e.target.value })
+  const setEventsWithFavourite = (list) => setEvents(list.map(list => ({ ...list, favourite: false })))
 
-  const filterEvents = async () => {
-    const data = await fetcher(API_URL)
-    const events = data.filter(({ city, date }) => {
-      const month = date.split('.')[1]
-      const matchMonth = filter.month === '' || Number(month) === Number(filter.month)
-      const matchCity = filter.city === '' || city.toLowerCase() === filter.city
-
-      return matchCity && matchMonth
-    })
-    setEvents(events)
-  }
-
-  const setupCities = async () => {
-    const data = await fetcher(API_URL)
-    const cities = [...new Set(data.map(({ city }) => city))]
-    setCities(cities)
-  }
-
-  const setupEvents = async () => {
-    const data = await fetcher(API_URL)
-    setEvents(data)
-  }
-
+  // Setup initial events list
   useEffect(() => {
+    const setupEvents = async () => {
+      const data = await fetcher(API_URL)
+      setEventsWithFavourite(data)
+    }
     setupEvents()
   }, [])
 
   // Setup list of city
   useEffect(() => {
+    const setupCities = async () => {
+      const data = await fetcher(API_URL)
+      const cities = [...new Set(data.map(({ city }) => city))]
+      setCities(cities)
+    }
     if (events.length > 0) {
       setupCities()
     }
   }, [events])
 
+  // Handle filtration
   useEffect(() => {
+    const filterEvents = async () => {
+      const data = await fetcher(API_URL)
+      const events = data.filter(({ city, date }) => {
+        const month = date.split('.')[1]
+        const matchMonth = filter.month === '' || Number(month) === Number(filter.month)
+        const matchCity = filter.city === '' || city.toLowerCase() === filter.city
+        return matchCity && matchMonth
+      })
+
+      setEventsWithFavourite(events)
+    }
     filterEvents()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter])
 
   return (
