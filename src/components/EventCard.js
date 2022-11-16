@@ -1,12 +1,21 @@
 import React from 'react'
-import { Box, Flex, Heading, Img, Text } from '@chakra-ui/react'
+import { Box, Flex, Heading, IconButton, Img, Text } from '@chakra-ui/react'
 
 import OutlineBookmarkIcon from '../icons/OutlineBookmarkIcon'
 import FilledBookmarkIcon from '../icons/FilledBookmarkIcon'
 
 
-function EventCard({ id, name, image }) {
-  const favourite = true
+function EventCard({ id, name, image, favourite, manageFavourite }) {
+
+
+  const onClick = () => {
+    if (favourite) {
+      manageFavourite.remove(id)
+    } else {
+      manageFavourite.add(id)
+    }
+  }
+
   return (
     <Flex
       p='6'
@@ -34,7 +43,7 @@ function EventCard({ id, name, image }) {
         <Box borderWidth='1.5px' px='2' borderRadius='md'>
           <Text fontSize='3xl'>{id}</Text>
         </Box>
-        {favourite ? <FilledBookmarkIcon /> : <OutlineBookmarkIcon />}
+        <IconButton _hover={{ bg: 'transparent' }} _active={{ bg: 'transparent' }} variant='ghost' onClick={onClick} aria-label='toggle favourite' icon={favourite ? <FilledBookmarkIcon /> : <OutlineBookmarkIcon />} />
       </Flex>
       <Flex >
         <Heading fontSize='3xl'>{name}</Heading>

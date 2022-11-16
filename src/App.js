@@ -9,12 +9,17 @@ const fetcher = (url) => fetch(url).then((res) => res.json())
 function App() {
   const [events, setEvents] = useState([])
   const [cities, setCities] = useState([])
+  const [favourites, setFavourites] = useState([])
   const [filter, setFilter] = useState({ city: '', month: '' })
-
 
   // helper functions
   const onChange = (e) => setFilter({ ...filter, [e.target.name]: e.target.value })
-  const setEventsWithFavourite = (list) => setEvents(list.map(list => ({ ...list, favourite: false })))
+  const setEventsWithFavourite = (list) => setEvents(list.map(list => ({ favourite: favourites.includes(list.id), ...list })))
+  const manageFavourite = {
+    add: (id) => setFavourites([...favourites, id]),
+    remove: (id) => setFavourites(favourites?.filter(fav => fav !== id)),
+  }
+
 
   // Setup initial events list
   useEffect(() => {
@@ -23,6 +28,7 @@ function App() {
       setEventsWithFavourite(data)
     }
     setupEvents()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // Setup list of city
@@ -51,7 +57,8 @@ function App() {
       setEventsWithFavourite(events)
     }
     filterEvents()
-  }, [filter])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filter, favourites])
 
   return (
     <Flex maxWidth='900px' mx='auto' mt='22' flexDirection='column'>
@@ -74,7 +81,7 @@ function App() {
         </Flex>
       </Flex>
       <SimpleGrid columns='2' spacing='6' mt='4' mb='16'>
-        {events?.map(event => <EventCard key={event.id} {...event} />)}
+        {events?.map(event => <EventCard key={event.id} {...event} manageFavourite={manageFavourite} />)}
       </SimpleGrid>
     </Flex>
   )
