@@ -1,12 +1,13 @@
-import { Flex, Heading, Select, SimpleGrid, Text } from "@chakra-ui/react"
 import { useState } from "react"
+import { Flex, Heading, Select, SimpleGrid, Text } from "@chakra-ui/react"
+
 import { data } from "./data"
+import { months } from "./constants"
+
 import EventCard from "./components/EventCard"
 
 function App() {
   const [events] = useState(data)
-
-
 
   return (
     <Flex maxWidth='900px' mx='auto' mt='22' flexDirection='column'>
@@ -24,18 +25,7 @@ function App() {
         <Flex alignItems='center'>
           <Text mr='2'>Month:</Text>
           <Select>
-            <option>January</option>
-            <option>February</option>
-            <option>March</option>
-            <option>April</option>
-            <option>May</option>
-            <option>June</option>
-            <option>July</option>
-            <option>August</option>
-            <option>September</option>
-            <option>October</option>
-            <option>November</option>
-            <option>December</option>
+            {months.map(({ title, value }) => <option key={value} value={value}>{title}</option>)}
           </Select>
         </Flex>
       </Flex>
