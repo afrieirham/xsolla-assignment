@@ -7,9 +7,10 @@ import EventCard from "./components/EventCard"
 const fetcher = (url) => fetch(url).then((res) => res.json())
 
 function App() {
+  const initialFavourite = JSON.parse(localStorage.getItem('favourites'))
   const [events, setEvents] = useState([])
   const [cities, setCities] = useState([])
-  const [favourites, setFavourites] = useState([])
+  const [favourites, setFavourites] = useState(initialFavourite ?? [])
   const [filter, setFilter] = useState({ city: '', month: '' })
 
   // helper functions
@@ -59,6 +60,15 @@ function App() {
     filterEvents()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter, favourites])
+
+  // Handle favourites in localStorage
+  useEffect(() => {
+    if (favourites.length > 0) {
+      localStorage.setItem('favourites', JSON.stringify(favourites))
+    } else {
+      localStorage.removeItem('favourites')
+    }
+  }, [favourites])
 
   return (
     <Flex maxWidth='900px' mx='auto' mt='22' flexDirection='column'>
