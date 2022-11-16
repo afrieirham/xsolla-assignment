@@ -48,3 +48,5 @@ export const months = [
     value: 12
   },
 ]
+
+export const API_URL = 'https://raw.githubusercontent.com/xsolla/test-task-frontend/master/events.json'
