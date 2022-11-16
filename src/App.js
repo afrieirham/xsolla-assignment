@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Flex, Heading, Select, SimpleGrid, Text } from "@chakra-ui/react"
+import { Checkbox, Flex, Heading, HStack, Select, SimpleGrid, Text } from "@chakra-ui/react"
 
 import { API_URL, months } from "./constants"
 import EventCard from "./components/EventCard"
@@ -11,16 +11,27 @@ function App() {
   const [events, setEvents] = useState([])
   const [cities, setCities] = useState([])
   const [favourites, setFavourites] = useState(initialFavourite ?? [])
-  const [filter, setFilter] = useState({ city: '', month: '' })
+  const [filter, setFilter] = useState({ city: '', month: '', onlyFavourite: false })
 
   // helper functions
-  const onChange = (e) => setFilter({ ...filter, [e.target.name]: e.target.value })
-  const setEventsWithFavourite = (list) => setEvents(list.map(list => ({ favourite: favourites.includes(list.id), ...list })))
+  const onChange = (e) => {
+    if (e.target.type === 'checkbox') { setFilter({ ...filter, [e.target.name]: e.target.checked }) }
+    else { setFilter({ ...filter, [e.target.name]: e.target.value }) }
+  }
   const manageFavourite = {
     add: (id) => setFavourites([...favourites, id]),
     remove: (id) => setFavourites(favourites?.filter(fav => fav !== id)),
   }
+  const setEventsWithFavourite = (events) => {
+    const eventsWithFavourite = events.map(evet => ({ favourite: favourites.includes(evet.id), ...evet }))
 
+    if (filter.onlyFavourite) {
+      setEvents(eventsWithFavourite.filter(event => event.favourite))
+    } else {
+      setEvents(eventsWithFavourite)
+    }
+
+  }
 
   // Setup initial events list
   useEffect(() => {
@@ -73,9 +84,9 @@ function App() {
   return (
     <Flex maxWidth='900px' mx='auto' mt='22' flexDirection='column'>
       <Heading> Event Listing</Heading>
-      <Flex mt='4'>
-        <Flex alignItems='center' mr='4'>
-          <Text mr='2'>City:</Text>
+      <HStack mt='4' spacing='4'>
+        <Flex alignItems='center'>
+          <Text whiteSpace='nowrap' mr='2'>City:</Text>
           <Select name='city' placeholder="Select city" onChange={onChange}>
             {cities?.map(city =>
               <option key={city} value={city.toLowerCase()}>{city}</option>
@@ -84,12 +95,15 @@ function App() {
           </Select>
         </Flex>
         <Flex alignItems='center'>
-          <Text mr='2'>Month:</Text>
+          <Text whiteSpace='nowrap' mr='2'>Month:</Text>
           <Select name='month' placeholder="Select month" onChange={onChange}>
             {months.map(({ title, value }) => <option key={value} value={value}>{title}</option>)}
           </Select>
         </Flex>
-      </Flex>
+        <Flex alignItems='center'>
+          <Checkbox name='onlyFavourite' onChange={onChange}>My favourite</Checkbox>
+        </Flex>
+      </HStack>
       <SimpleGrid columns='2' spacing='6' mt='4' mb='16'>
         {events?.map(event => <EventCard key={event.id} {...event} manageFavourite={manageFavourite} />)}
       </SimpleGrid>
