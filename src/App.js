@@ -9,6 +9,28 @@ const fetcher = (url) => fetch(url).then((res) => res.json())
 function App() {
   const [events, setEvents] = useState([])
   const [cities, setCities] = useState([])
+  const [filter, setFilter] = useState({ city: '', month: '' })
+
+
+  const onChange = (e) => setFilter({ ...filter, [e.target.name]: e.target.value })
+
+  const filterEvents = async () => {
+    const data = await fetcher(API_URL)
+    const events = data.filter(({ city, date }) => {
+      const month = date.split('.')[1]
+      const matchMonth = filter.month === '' || Number(month) === Number(filter.month)
+      const matchCity = filter.city === '' || city.toLowerCase() === filter.city
+
+      return matchCity && matchMonth
+    })
+    setEvents(events)
+  }
+
+  const setupCities = async () => {
+    const data = await fetcher(API_URL)
+    const cities = [...new Set(data.map(({ city }) => city))]
+    setCities(cities)
+  }
 
   const setupEvents = async () => {
     const data = await fetcher(API_URL)
@@ -22,10 +44,14 @@ function App() {
   // Setup list of city
   useEffect(() => {
     if (events.length > 0) {
-      const cities = [...new Set(events.map(({ city }) => city))]
-      setCities(cities)
+      setupCities()
     }
   }, [events])
+
+  useEffect(() => {
+    filterEvents()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filter])
 
   return (
     <Flex maxWidth='900px' mx='auto' mt='22' flexDirection='column'>
@@ -33,16 +59,16 @@ function App() {
       <Flex mt='4'>
         <Flex alignItems='center' mr='4'>
           <Text mr='2'>City:</Text>
-          <Select placeholder="Select city">
+          <Select name='city' placeholder="Select city" onChange={onChange}>
             {cities?.map(city =>
-              <option value={city.toLowerCase()}>{city}</option>
+              <option key={city} value={city.toLowerCase()}>{city}</option>
             )}
 
           </Select>
         </Flex>
         <Flex alignItems='center'>
           <Text mr='2'>Month:</Text>
-          <Select placeholder="Select month">
+          <Select name='month' placeholder="Select month" onChange={onChange}>
             {months.map(({ title, value }) => <option key={value} value={value}>{title}</option>)}
           </Select>
         </Flex>
